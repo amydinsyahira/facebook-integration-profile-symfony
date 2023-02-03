@@ -58,8 +58,9 @@ COPY --from=composer /composer /usr/bin/composer
 COPY composer.* symfony.* package.* ./
 RUN set -eux; \
     if [ -f package.json ]; then \
-		npm install --omit=dev; \
-    fi; \
+		npm install; \
+    fi
+RUN set -eux; \
     if [ -f composer.json ]; then \
 		php -d memory_limit=-1 `which composer` install --no-cache --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress; \
 		composer clear-cache; \
