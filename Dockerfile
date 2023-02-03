@@ -9,6 +9,14 @@ COPY package.* ./
 RUN apk add --no-cache python3 make g++
 RUN npm install --omit=dev
 COPY . ./
+
+# https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
+ENV COMPOSER_ALLOW_SUPERUSER=1
+ENV PATH="${PATH}:/root/.composer/vendor/bin"
+
+COPY --from=composer /composer /usr/bin/composer
+
+RUN composer require symfony/webpack-encore-bundle
 RUN npm run build
 
 # Prod image
