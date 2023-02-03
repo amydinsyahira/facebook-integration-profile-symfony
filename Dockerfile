@@ -1,12 +1,20 @@
+LABEL maintainer="Amydin S"
 # Builder images
 FROM composer/composer:2-bin AS composer
 FROM mlocati/php-extension-installer:latest AS php_extension_installer
+
+FROM node:alpine AS node
+WORKDIR /app
+COPY package.* ./
+
+RUN apk add --no-cache python3 make g++
+RUN npm install --omit=dev
+COPY . ./
+RUN npm run build
+
 # Prod image
 FROM php:8.2-fpm-alpine
-
-LABEL maintainer="Amydin S"
 ENV APP_ENV=prod
-
 WORKDIR /srv/app
 
 # php extensions installer: https://github.com/mlocati/docker-php-extension-installer
@@ -56,19 +64,16 @@ ENV PATH="${PATH}:/root/.composer/vendor/bin"
 COPY --from=composer /composer /usr/bin/composer
 
 # prevent the reinstallation of vendors at every changes in the source code
-COPY composer.* symfony.* package.* ./
+COPY composer.* symfony.* ./
 RUN set -eux; \
     if [ -f composer.json ]; then \
 		php -d memory_limit=-1 `which composer` install --no-cache --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress; \
 		composer clear-cache; \
-    fi; \
-    if [ -f package.json ]; then \
-        npm install --omit=dev; \
-        npm run build; \
     fi
 
 # copy sources
 COPY . ./
+COPY --from=node /app/public ./public
 RUN rm -Rf docker/
 
 RUN set -eux; \
