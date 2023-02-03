@@ -5,8 +5,11 @@ FROM mlocati/php-extension-installer:latest AS php_extension_installer
 FROM node:alpine AS node
 WORKDIR /app
 COPY package.* ./
+COPY --from=php_extension_installer /usr/bin/install-php-extensions /usr/local/bin/
 
 RUN apk add --no-cache python3 make g++ php
+RUN set -eux; \
+    install-php-extensions;
 RUN npm install --omit=dev
 COPY . ./
 
