@@ -6,7 +6,7 @@ FROM node:alpine AS node
 WORKDIR /app
 COPY package.* ./
 
-RUN apk add --no-cache python3 make g++
+RUN apk add --no-cache python3 make g++ php
 RUN npm install --omit=dev
 COPY . ./
 
