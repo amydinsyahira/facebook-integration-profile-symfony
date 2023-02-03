@@ -1,4 +1,3 @@
-LABEL maintainer="Amydin S"
 # Builder images
 FROM composer/composer:2-bin AS composer
 FROM mlocati/php-extension-installer:latest AS php_extension_installer
@@ -14,6 +13,7 @@ RUN npm run build
 
 # Prod image
 FROM php:8.2-fpm-alpine
+LABEL maintainer="Amydin S"
 ENV APP_ENV=prod
 WORKDIR /srv/app
 
