@@ -1,27 +1,6 @@
 # Builder images
 FROM composer/composer:2-bin AS composer
 FROM mlocati/php-extension-installer:latest AS php_extension_installer
-
-FROM node:alpine AS node
-WORKDIR /app
-COPY package.* ./
-COPY --from=php_extension_installer /usr/bin/install-php-extensions /usr/local/bin/
-
-RUN apk add --no-cache python3 make g++ php
-RUN set -eux; \
-    install-php-extensions;
-RUN npm install --omit=dev
-COPY . ./
-
-# https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
-ENV COMPOSER_ALLOW_SUPERUSER=1
-ENV PATH="${PATH}:/root/.composer/vendor/bin"
-
-COPY --from=composer /composer /usr/bin/composer
-
-RUN composer require symfony/webpack-encore-bundle
-RUN npm run build
-
 # Prod image
 FROM php:8.2-fpm-alpine
 LABEL maintainer="Amydin S"
@@ -38,6 +17,7 @@ RUN apk add --no-cache \
 		file \
 		gettext \
 		git \
+        npm \
 	;
 
 RUN set -eux; \
@@ -75,8 +55,11 @@ ENV PATH="${PATH}:/root/.composer/vendor/bin"
 COPY --from=composer /composer /usr/bin/composer
 
 # prevent the reinstallation of vendors at every changes in the source code
-COPY composer.* symfony.* ./
+COPY composer.* symfony.* package.* ./
 RUN set -eux; \
+    if [ -f package.json ]; then \
+		npm install --omit=dev; \
+    fi; \
     if [ -f composer.json ]; then \
 		php -d memory_limit=-1 `which composer` install --no-cache --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress; \
 		composer clear-cache; \
@@ -84,10 +67,12 @@ RUN set -eux; \
 
 # copy sources
 COPY . ./
-COPY --from=node /app/public ./public
 RUN rm -Rf docker/
 
 RUN set -eux; \
+    if [ -f package.json ]; then \
+		npm run build; \
+    fi; \
 	mkdir -p var/cache var/log; \
     if [ -f composer.json ]; then \
 		composer dump-autoload --classmap-authoritative --no-dev; \
