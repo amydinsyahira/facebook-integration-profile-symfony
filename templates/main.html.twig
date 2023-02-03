@@ -1,0 +1,74 @@
+<div>
+  <div class="md:grid md:grid-cols-3 md:gap-6">
+    <div class="md:col-span-1">
+        <div class="flex items-center">
+            <div class="px-2 sm:px-0 mr-4">
+                <span class="inline-block h-12 w-12 overflow-hidden rounded-full" style="background-color: #1877f2;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="text-white w-6 h-9 m-3">
+                        <path fill="currentColor" d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"/>
+                    </svg>
+                </span>
+            </div>
+            <div class="px-4 sm:px-0">
+                <h3 class="text-lg font-medium leading-6 text-gray-900">Facebook Integration Profile</h3>
+                <p class="mt-1 text-sm text-gray-600">This integration allows users to use their Facebook login credentials.</p>
+            </div>
+        </div>
+    </div>
+    <div class="mt-5 md:col-span-2 md:mt-0">
+      <form action="#" method="POST">
+        <div class="shadow sm:overflow-hidden sm:rounded-md">
+          <div class="space-y-6 bg-white px-4 py-5 sm:p-6">
+
+            <div class="bg-gray-50 px-4 py-3 text-right sm:px-6">
+                <button type="button" class="inline-flex justify-center rounded-md border border-transparent bg-blue-600 w-full py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" onclick="location.href='{{ fbLoginUrl }}'">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                        <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+                    </svg>
+                    Add Profile
+                </button>
+            </div>
+
+            {% if fbUserEmail %}
+            <div class="grid grid-cols-1">
+                <div class="col-span-5">
+                    <label for="company-website" class="block text-sm font-medium text-gray-700">Email</label>
+                    <div class="mt-1 flex rounded-md shadow-sm text-sm font-medium">
+                        {{ fbUserEmail }}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="grid grid-cols-6 gap-2">
+
+                <div class="col-span-1">
+                    <label class="block text-sm font-medium text-gray-700">Photo</label>
+                    <div class="mt-1 flex items-center">
+                        <span class="inline-block h-12 w-12 overflow-hidden rounded-full bg-gray-100">
+                        {% if fbUserPic %}
+                            <img src="{{ fbUserPic }}" class="h-full w-full text-gray-300" />
+                        {% else %}
+                            <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                        {% endif %}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="col-span-5">
+                    <label for="company-website" class="block text-sm font-medium text-gray-700">Access Token</label>
+                    <div class="mt-1 flex rounded-md shadow-sm">
+                        <input type="text" name="access-token" id="access-token" class="block w-full flex-1 rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-3" placeholder="Add profile to generate the access token" value="{{ fbAccessToken }}" readonly="true">
+                    </div>
+                </div>
+
+            </div>
+            </div>
+
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
